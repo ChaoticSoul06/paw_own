@@ -3,17 +3,10 @@ pipeline {
 
     stages {
 
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
-                // Example:
-                // git 'https://your-repo-url.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'No build needed for HTML project'
+                git branch: 'feature-pages',
+                    url: 'https://github.com/ChaoticSoul06/paw_own.git'
             }
         }
 
@@ -24,15 +17,18 @@ pipeline {
                 if not exist index.html exit 1
                 if not exist about.html exit 1
                 if not exist contact.html exit 1
-                echo All required pages exist
                 '''
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying entire folder to XAMPP htdocs (paw_own)'
-                bat 'robocopy . E:\\xampp\\htdocs\\paw_own /E'
+                echo 'Deploying to XAMPP htdocs'
+                bat '''
+                robocopy . E:\\xampp\\htdocs\\paw_own /E /XD .git
+                if %ERRORLEVEL% LEQ 7 exit /B 0
+                exit /B %ERRORLEVEL%
+                '''
             }
         }
     }
