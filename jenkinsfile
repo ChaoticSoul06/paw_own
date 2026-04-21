@@ -2,29 +2,37 @@ pipeline {
     agent any
 
     stages {
+
         stage('Clone') {
             steps {
                 echo 'Cloning repository...'
+                // Example:
+                // git 'https://your-repo-url.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'No build needed for HTML'
+                echo 'No build needed for HTML project'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Checking if index.html exists'
-                bat 'if exist index.html (echo File exists) else (exit 1)'
+                echo 'Checking required pages'
+                bat '''
+                if not exist index.html exit 1
+                if not exist about.html exit 1
+                if not exist contact.html exit 1
+                echo All required pages exist
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying to XAMPP htdocs'
-                bat 'copy index.html E:\\xampp\\htdocs\\'
+                echo 'Deploying entire folder to XAMPP htdocs (paw_own)'
+                bat 'robocopy . E:\\xampp\\htdocs\\paw_own /E'
             }
         }
     }
